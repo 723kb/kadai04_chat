@@ -170,9 +170,9 @@ $('#filter').on('input', () => {
   get(dbRef).then((snapshot) => {
     snapshot.forEach((childSnapshot) => { // 取得したテータをここのメモに分割して処理
       const childData = childSnapshot.val();
-      if (childData.title.toLowerCase().includes(filter)) { // タイトルが入力された値を含む場合のみ以下の処理
-        addMemoToList($('#list'), childData.title, childData.text, childData.timestamp); // 日本語のメッセージを追加
-        addMemoToList($('#list'), childData.title, childData.translatedText, childData.timestamp); // 翻訳された中国語を追加
+      if (childData.text.toLowerCase().includes(filter)) { // タイトルが入力された値を含む場合のみ以下の処理
+        addMemoToList($('#list'), childData.title, childData.text, true, childData.timestamp); // 日本語メッセージ
+        addMemoToList($('#list'), childData.title, childData.translatedText, false, childData.timestamp); // 中国語メッセージ
       }
     });
   });
