@@ -11,6 +11,19 @@ const db = getDatabase(app); //RealtimeDBに接続
 const dbRef = ref(db, "chat"); //RealtimeDB内の"chat"を使う
 // ここまでFirebaseへの接続
 
+// 使い方説明のtoggleメソッド
+// 最初は非表示にする
+$('#toggleDiv').hide();
+$('#toggleButton').click(() => {
+  $('#toggleDiv').slideToggle();
+});
+
+// フィルタリング機能説明のtoggleメソッド
+$("#filter").hide();
+$("#search").on("click", () => {
+  $("#filter").slideToggle();
+});
+
 // メモが読み込まれたかどうかを示すフラグ
 let memosLoaded = false; //これがないとリロードのたびにloadMemosが読み込まれてしまう
 
@@ -23,19 +36,6 @@ $(document).ready(() => {
     memosLoaded = true; //ここでtrue判定になるのでリロードしてもloadMemosは呼び出されない
   }
 });
-
-  // 使い方説明のtoggleメソッド
-  // 最初は非表示にする
-  $('#toggleDiv').hide();
-  $('#toggleButton').click(() => {
-    $('#toggleDiv').slideToggle();
-  });
-
-    // フィルタリング機能説明のtoggleメソッド
-    $("#filter").hide();
-    $("#search").on("click", () => {
-      $("#filter").slideToggle();
-    });
 
 // メモをリストに追加する関数
 // isJapanese 日本語のメモかどうかを判定するためのパラメーター名
