@@ -13,11 +13,11 @@
 }
 
 .chat-bubble.left {
-  @apply  bg-slate-50 rounded-tr-sm;
+  @apply  bg-[#EDF1EE] rounded-tr-sm;
 }
 
 .chat-bubble.right {
-  @apply bg-green-400 text-white rounded-tl-sm ml-auto;
+  @apply bg-[#8DE055] rounded-tl-sm ml-auto;
 }
 
 .chat-bubble h3 {

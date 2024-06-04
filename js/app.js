@@ -44,14 +44,14 @@ const addMemoToList = (list, title, text, isJapanese) => {
   const timestamp = Date.now(); // メッセージを判別するために、現在のタイムスタンプを取得
   if (isJapanese) { // isJapaneseがtrueなら、日本語のメモを追加
     li.html(`
-      <div class="chat-bubble left" data-timestamp="${timestamp}"> 
+      <div class="chat-bubble right" data-timestamp="${timestamp}"> 
         <h3>${title}</h3>
-        <p class='text-gray-500'>日本語: <span class='jp-text'>${text}</span></p>
+        <p>日本語: <span class='jp-text'>${text}</span></p>
       </div>
     `);
   } else { // isJapaneseがfalseなら、中国語のメモを追加
     li.html(`
-      <div class="chat-bubble right " data-timestamp="${timestamp}">
+      <div class="chat-bubble left " data-timestamp="${timestamp}">
         <h3>${title}</h3>
         <p>中国語: <span class='cn-text'>${text}</span></p>
       </div>

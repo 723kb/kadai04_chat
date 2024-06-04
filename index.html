@@ -13,7 +13,7 @@
   <link rel="apple-touch-icon" href="img/apple-touch-icon-180x180.png" sizes="180x180">
 </head>
 
-<body class="max-w-[1200px] mx-auto h-screen flex flex-col">
+<body class="max-w-[1200px] mx-auto h-screen flex flex-col bg-[#7494C0]">
   <!-- ヘッダー -->
   <header class="bg-cover bg-center m-4 p-4 flex justify-center items-center"
     style="background-image: url('img/header.jpg');">
@@ -22,9 +22,9 @@
   <!-- メイン -->
   <main class="flex-grow flex flex-col">
     <!-- 使い方説明 -->
-    <button id="toggleButton" class="ml-5 p-2 text-xl hover:bg-yellow-200 rounded-md"><i
+    <button id="toggleButton" class="mx-5 mt-5 p-2 text-xl hover:bg-white  rounded-md"><i
         class="fas fa-question-circle"></i></button>
-    <div id="toggleDiv" class="mx-5 px-5">
+    <div id="toggleDiv" class="mx-5 px-5 bg-white rounded-md">
       <p class="m-2">▼入力は全て日本語でお願いします。</p>
       <p class="m-2">▼タイトルと本文どちらも入力していないと送信できません。</p>
       <p class="m-2">▼タイトル：翻訳したい言葉はどんな場面で使用するかを入力してください。フィルタリングに使います。</p>
@@ -35,18 +35,18 @@
     </div>
     <!-- 登録内容表示エリア -->
     <!-- <div class="text-center text-xl">▽ 翻訳結果 ▽</div> -->
-    <div id="list" class="w-full flex-grow overflow-auto p-5 mb-[220px]">
+    <div id="list" class="w-full flex-grow overflow-auto p-5 mb-5">
       <!-- ここに追加データが挿入される -->
     </div>
         <!-- フィルタリングエリア -->
         <div class="mx-5 pb-5 flex flex-col justify-center items-center">
-          <button id="search" class="ml-5 p-2 text-xl hover:bg-yellow-200 rounded-md"><i
+          <button id="search" class="mx-5 mt-5 p-2 text-xl hover:bg-white  rounded-md"><i
               class="fas fa-search "></i></button>
           <input id="filter" type="text" placeholder="検索したいタイトルを入力"
             class="text-lg py-5 px-2 border-solid border border-slate-500 rounded-xl hover:bg-pink-50 w-full">
         </div>
     <!-- 入力エリア -->
-    <div class="bg-white z-10 p-5 border-t border-slate-500">
+    <div class="bg-[#7494C0] z-10 p-5 border-t border-slate-500">
   
       <div class="flex flex-col mx-5 px-5 pt-5 border-solid border-2 border-slate-500 rounded-xl bg-white">
         <input id="title" type="text" placeholder="タイトルを入力　例：あいさつ"
