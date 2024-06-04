@@ -27,6 +27,8 @@ let memosLoaded = false; //これがないとリロードのたびにloadMemos�
   }
 });
 
+addMemoToList();
+
 // MyMemory APIを使って指定されたテキストを翻訳する関数
 const translateText = async (text) => {
   const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ja|zh-CN`;
