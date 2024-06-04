@@ -25,5 +25,5 @@
 }
 
 .chat-bubble p {
-  @apply text-sm m-0;
+  @apply text-sm m-0 mb-1;
 }

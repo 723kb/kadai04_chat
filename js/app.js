@@ -15,13 +15,6 @@ const dbRef = ref(db, "chat"); //RealtimeDB内の"chat"を使う
 let memosLoaded = false; //これがないとリロードのたびにloadMemosが読み込まれてしまう
 
 $(document).ready(() => {
-  // 使い方説明のtoggleメソッド
-  // 最初は非表示にする
-  $('#toggleDiv').hide();
-  $('#toggleButton').click(() => {
-    $('#toggleDiv').slideToggle();
-  });
-
   // メモの読み込み
   // memosLoadedがfalseの場合のみloadMemosを呼び出す
   if (!memosLoaded) {  //最初はfalse設定 読み込み時に$(document).ready(() => {の内容に入り、loadMemosが呼び出される
@@ -29,24 +22,41 @@ $(document).ready(() => {
     // memosLoadedをtrueに設定して、loadMemosが1回だけ実行されるようにする
     memosLoaded = true; //ここでtrue判定になるのでリロードしてもloadMemosは呼び出されない
   }
-
-  // フィルタリング機能説明のtoggleメソッド
-  $("#filter").hide();
-  $("#search").on("click", () => {
-    $("#filter").slideToggle();
-  });
 });
+
+  // 使い方説明のtoggleメソッド
+  // 最初は非表示にする
+  $('#toggleDiv').hide();
+  $('#toggleButton').click(() => {
+    $('#toggleDiv').slideToggle();
+  });
+
+    // フィルタリング機能説明のtoggleメソッド
+    $("#filter").hide();
+    $("#search").on("click", () => {
+      $("#filter").slideToggle();
+    });
 
 // メモをリストに追加する関数
 // isJapanese 日本語のメモかどうかを判定するためのパラメーター名
-const addMemoToList = (list, title, text, isJapanese) => {
+const addMemoToList = (list, title, text, isJapanese, timestamp) => {
   const li = $('<li></li>').addClass('w-full flex mb-4');
-  const timestamp = Date.now(); // メッセージを判別するために、現在のタイムスタンプを取得
+  // const timestamp = Date.now(); // メッセージを判別するために、現在のタイムスタンプを取得
+  // タイムスタンプを使用して日時をフォーマット
+  let date = new Date(timestamp);
+  let y = date.getFullYear();
+  let m = ('0' + (date.getMonth() + 1)).slice(-2);
+  let d = ('0' + date.getDate()).slice(-2);
+  let h = ('0' + date.getHours()).slice(-2);
+  let min = ('0' + date.getMinutes()).slice(-2);
+  let formattedDate = y + '/' + m + '/' + d + ' ' + h + ':' + min;
+
   if (isJapanese) { // isJapaneseがtrueなら、日本語のメモを追加
     li.html(`
       <div class="chat-bubble right" data-timestamp="${timestamp}"> 
         <h3>${title}</h3>
         <p>日本語: <span class='jp-text'>${text}</span></p>
+        <p>${formattedDate}</p>
       </div>
     `);
   } else { // isJapaneseがfalseなら、中国語のメモを追加
@@ -54,6 +64,7 @@ const addMemoToList = (list, title, text, isJapanese) => {
       <div class="chat-bubble left " data-timestamp="${timestamp}">
         <h3>${title}</h3>
         <p>中国語: <span class='cn-text'>${text}</span></p>
+        <p>${formattedDate}</p>
       </div>
     `);
   }
@@ -99,10 +110,10 @@ const saveMemo = async () => {
       });
 
       // 日本語のメッセージをリストに追加し、即時表示
-      addMemoToList($('#list'), title, text, true); // addMemoToListに渡されるisJapaneseがtrueの場合
+      addMemoToList($('#list'), title, text, true, timestamp); // addMemoToListに渡されるisJapaneseがtrueの場合
       // 一定時間後に中国語のメッセージを表示
       setTimeout(() => {
-        addMemoToList($('#list'), title, translatedText, false); // addMemoToListに渡されるisJapaneseがfalseの場合
+        addMemoToList($('#list'), title, translatedText, false, timestamp); // addMemoToListに渡されるisJapaneseがfalseの場合
       }, 2000); // 2000ミリ秒（2秒）後に表示
       $('#title').val('');
       $('#text').val('');
@@ -144,8 +155,8 @@ const loadMemos = () => {
     messages.sort((a, b) => a.timestamp - b.timestamp); // 比較関数 timestampが小さい(古い)順に並び替え
 
     messages.forEach((message) => { // 各メッセージに対して以下実行
-      addMemoToList($('#list'), message.title, message.text, true); // 日本語のメッセージをリストに追加
-      addMemoToList($('#list'), message.title, message.translatedText, false); // 中国語のメッセージをリストに追加
+      addMemoToList($('#list'), message.title, message.text, true, message.timestamp); // 日本語のメッセージをリストに追加
+      addMemoToList($('#list'), message.title, message.translatedText, false, message.timestamp); // 中国語のメッセージをリストに追加
     });
   }).catch(error => {
     console.error('データベースからメッセージを取得中にエラーが発生しました:', error);
@@ -160,8 +171,8 @@ $('#filter').on('input', () => {
     snapshot.forEach((childSnapshot) => { // 取得したテータをここのメモに分割して処理
       const childData = childSnapshot.val();
       if (childData.title.toLowerCase().includes(filter)) { // タイトルが入力された値を含む場合のみ以下の処理
-        addMemoToList($('#list'), childData.title, childData.text); // 日本語のメッセージを追加
-        addMemoToList($('#list'), childData.title, childData.translatedText); // 翻訳された中国語を追加
+        addMemoToList($('#list'), childData.title, childData.text, childData.timestamp); // 日本語のメッセージを追加
+        addMemoToList($('#list'), childData.title, childData.translatedText, childData.timestamp); // 翻訳された中国語を追加
       }
     });
   });
