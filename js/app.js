@@ -22,7 +22,6 @@ $(document).ready(() => {
     $('#toggleDiv').slideToggle();
   });
 
-  // メモの読み込み
   // memosLoadedがfalseの場合のみloadMemosを呼び出す
   if (!memosLoaded) {  //最初はfalse設定 読み込み時に$(document).ready(() => {の内容に入り、loadMemosが呼び出される
     loadMemos();
@@ -62,8 +61,7 @@ const addMemoToList = (list, text, isJapanese, timestamp, key, shouldScroll = fa
         <button class="delete-memo">
           <i class="fa-regular fa-trash-can"></i>
         </button>
-        
-      </div>
+        </div>
       </div>
     `);
   } else { // isJapaneseがfalseなら、中国語のメモを追加
@@ -79,7 +77,7 @@ const addMemoToList = (list, text, isJapanese, timestamp, key, shouldScroll = fa
   list.append(li);
 
   // 投稿時のみ追加した投稿の位置までページをスクロールする
-  if (shouldScroll) { // shouldScrollがtrueの時実行
+  if (shouldScroll) { // shouldScrollがtrueの時のみ実行
     const scrollTo = li.offset().top;
     $('html, body').animate({
       scrollTop: scrollTo
@@ -113,13 +111,13 @@ const saveMemo = async () => {
   // console.log('saveMemo 関数が呼び出されました');
   const text = $('#text').val(); // タイトルと本文を取得
 
-  if (text) { // タイトルと本文が入力されている場合のみ処理を行う
+  if (text) { // 本文が入力されている場合のみ実行
     try {
       const translatedText = await translateText(text); // テキストを翻訳
       const timestamp = Date.now(); // 現在のタイムスタンプを取得
       const newMemoRef = push(dbRef); // データベースの新しい参照を作成
       const key = newMemoRef.key; // 新しいメモのキーを取得
-      set(newMemoRef, { // タイトル、本文、翻訳済みテキスト、タイムスタンプをデータベースに保存
+      set(newMemoRef, { // 本文、翻訳済みテキスト、タイムスタンプをデータベースに保存
         text: text,
         translatedText: translatedText,
         timestamp: timestamp  // すでにnewMemoRefにはキーを含んだノード参照になっているので、keyは渡さない
@@ -152,8 +150,11 @@ $(document).on('keypress', (e) => {
 
 // clearクリックイベント
 $('#clear').on('click', () => {
-  remove(dbRef); // データベースからデータを削除
-  $('#list').empty(); // listの中身を空にする
+  // 確認メッセージを表示し、OKが押された場合のみ削除を実行
+  if (confirm("本当に削除しますか？")) {
+    remove(dbRef); // データベースからデータを削除
+    $('#list').empty(); // listの中身を空にする
+  }
 });
 
 // データベースを読み込み、リストに表示する関数
