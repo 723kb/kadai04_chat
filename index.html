@@ -16,7 +16,7 @@
 
 <body class="max-w-[1200px] mx-auto h-screen flex flex-col bg-[#7494C0]">
   <!-- ヘッダー -->
-  <header class="bg-cover bg-center my-4 p-4 flex justify-center items-center"
+  <header class="bg-cover bg-center mb-4 p-4 flex justify-center items-center"
     style="background-image: url('img/header.jpg');">
     <p class="p-2 bg-white bg-opacity-90 rounded-md text-3xl text-center">日→中 簡易翻訳<br class="sm:hidden">チャットボット</p>
   </header>
@@ -41,13 +41,15 @@
       <!-- ここに追加データが挿入される -->
     </div>
     <!-- フィルタリングエリア -->
-    <div class="mx-5 pb-5 flex flex-col justify-center items-center">
+    <div class="mx-2 pb-5 flex flex-col justify-center items-center">
       <button id="search" class="mx-5 mt-5 mb-2 p-2 text-lg hover:bg-white  rounded-md"><i
           class="fas fa-search "></i></button>
-      <div id="filterArea" class="w-1/2 flex flex-row justify-center items-center bg-white rounded-xl">
+      <div id="filterArea" class="w-1/2 flex flex-row justify-center items-center bg-white rounded-md">
         <input id="filter" type="text" placeholder="日本語で検索したい言葉を入力"
-          class="w-full text-lg py-5 px-2  rounded-xl hover:bg-pink-50">
-        <button id="filterClear" class="m-5 p-2 text-lg hover:bg-pink-50 rounded-md"><i class="fa-solid fa-delete-left"></i></button>
+          class="w-full h-12 text-lg py-5 px-2  rounded-xl hover:bg-pink-50">
+          <button id="searchButton" class=" p-2 text-lg hover:bg-pink-50 rounded-md"><i
+            class="fas fa-search "></i></button>
+        <button id="filterClear" class=" p-2 text-lg hover:bg-pink-50 rounded-md"><i class="fa-solid fa-delete-left"></i></button>
       </div>
     </div>
     <!-- 入力エリア -->
@@ -71,7 +73,7 @@
   </main>
 
   <!-- フッター -->
-  <footer class="bg-cover bg-center my-4 p-4 flex justify-center items-center"
+  <footer class="bg-cover bg-center mt-4 p-4 flex justify-center items-center"
     style="background-image: url('img/header.jpg');">
     <p class="p-2 bg-white bg-opacity-90 rounded-md text-xl">© 2024 なっちゃん</p>
   </footer>

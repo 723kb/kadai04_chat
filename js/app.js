@@ -1,6 +1,6 @@
 import firebaseConfig from "./firebaseApikey.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"; // Realtime Database用の関数をインポートする
+import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved, get, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"; // Realtime Database用の関数をインポートする
 
 // Your web app's Firebase configuration
 console.log(firebaseConfig);
@@ -39,8 +39,9 @@ $(document).ready(() => {
 
 // メモをリストに追加する関数
 // isJapanese 日本語のメモかどうかを判定するためのパラメーター名
-const addMemoToList = (list, text, isJapanese, timestamp) => {
-  const li = $('<li></li>').addClass('w-full flex mb-4');
+// shouldScroll = falseはスクロールが必要か判断するオプション
+const addMemoToList = (list, text, isJapanese, timestamp, key, shouldScroll = false) => {
+  const li = $('<li></li>').addClass('w-full flex mb-4').attr('data-key', key);
   // const timestamp = Date.now(); // メッセージを判別するために、現在のタイムスタンプを取得
   // タイムスタンプを使用して日時をフォーマット
   let date = new Date(timestamp);
@@ -56,7 +57,13 @@ const addMemoToList = (list, text, isJapanese, timestamp) => {
       <div class="chat-bubble right" data-timestamp="${timestamp}"> 
         <h3>日本語 : </h3>
         <p class='jp-text'>${text}</p>
-        <p class="text-end">${formattedDate}</p>
+        <div class="timestamp">
+        <p>${formattedDate}</p>
+        <button class="delete-memo">
+          <i class="fa-regular fa-trash-can"></i>
+        </button>
+        
+      </div>
       </div>
     `);
   } else { // isJapaneseがfalseなら、中国語のメモを追加
@@ -71,12 +78,21 @@ const addMemoToList = (list, text, isJapanese, timestamp) => {
 
   list.append(li);
 
-  // addMemo関数を実行した時のみ追加した投稿の位置までページをスクロールする
-  
-  const scrollTo = li.offset().top;
-  $('html, body').animate({
-    scrollTop: scrollTo
-  }, 500); // 0.5秒かけてスクロール
+  // 投稿時のみ追加した投稿の位置までページをスクロールする
+  if (shouldScroll) { // shouldScrollがtrueの時実行
+    const scrollTo = li.offset().top;
+    $('html, body').animate({
+      scrollTop: scrollTo
+    }, 1000);
+  }
+
+  // 削除ボタンのクリックイベント(各日本語メッセージの削除)
+  li.find('.delete-memo').on('click', function () {  // アロー関数にするとthisが機能しない!!
+    const key = $(this).closest('li').data('key'); // クリックされた削除ボタンの親要素liを取得
+    remove(child(dbRef, key)); // キーに対応するメモをデータベースから削除
+    $(this).closest('li').remove(); // クリックされた削除ボタンの親要素liをリストから削除
+    $(`[data-key="${key}-cn"]`).remove(); // 削除したメモのキーと-cn属性を持つ要素を削除(連動して消える)
+  });
 };
 
 // MyMemory APIを使って指定されたテキストを翻訳する関数
@@ -102,17 +118,20 @@ const saveMemo = async () => {
       const translatedText = await translateText(text); // テキストを翻訳
       const timestamp = Date.now(); // 現在のタイムスタンプを取得
       const newMemoRef = push(dbRef); // データベースの新しい参照を作成
+      const key = newMemoRef.key; // 新しいメモのキーを取得
       set(newMemoRef, { // タイトル、本文、翻訳済みテキスト、タイムスタンプをデータベースに保存
         text: text,
         translatedText: translatedText,
-        timestamp: timestamp
+        timestamp: timestamp  // すでにnewMemoRefにはキーを含んだノード参照になっているので、keyは渡さない
       });
 
       // 日本語のメッセージをリストに追加し、即時表示
-      addMemoToList($('#list'), text, true, timestamp); // addMemoToListに渡されるisJapaneseがtrueの場合
+      // addMemoToListに渡されるisJapaneseがtrueの場合
+      addMemoToList($('#list'), text, true, timestamp, key, true); // 2つめのtrueは投稿時にスクロールするフラグ
       // 一定時間後に中国語のメッセージを表示
       setTimeout(() => {
-        addMemoToList($('#list'), translatedText, false, timestamp); // addMemoToListに渡されるisJapaneseがfalseの場合
+        // addMemoToListに渡されるisJapaneseがfalseの場合
+        addMemoToList($('#list'), translatedText, false, timestamp, `${key}-cn`, true); // 2つめのtrueは投稿時にスクロールするフラグ
       }, 2000); // 2000ミリ秒（2秒）後に表示
       $('#text').val('');
     } catch (error) {
@@ -139,13 +158,15 @@ $('#clear').on('click', () => {
 
 // データベースを読み込み、リストに表示する関数
 const loadMemos = () => {
-  $('#list').empty(); // 読み込み時に既存のメモが重複して表示しないよう、リストを空にする
+
   // データベースからデータ取得が成功した場合
-  get(dbRef).then((snapshot) => { // getメソッドの結果として返されるのがsnapshotオブジェクト
+  get(dbRef).then((snapshot) => { // getメソッドの結果として返されるのがsnapshot(状態の写し)オブジェクト
+    $('#list').empty(); // メッセージを表示する前にリストを空にする = 重複表示しない
     const messages = [];
     snapshot.forEach((childSnapshot) => { // 取得したデータを1つずつ処理 各子ノードがchildSnapshot
       const childData = childSnapshot.val(); // データを取得 childSnapshotはメモそのもの childDataはメモ内容をJSON形式で返すもの
-      messages.push(childData); // 配列に追加
+      const key = childSnapshot.key; // 各メモのキーを取得
+      messages.push({ key, ...childData }); // 配列に追加 スプレッド構文でchildDataのプロパティを展開
     });
 
     // 配列内の要素をタイムスタンプ順にソート
@@ -153,30 +174,50 @@ const loadMemos = () => {
     messages.sort((a, b) => a.timestamp - b.timestamp); // 比較関数 timestampが小さい(古い)順に並び替え
 
     messages.forEach((message) => { // 各メッセージに対して以下実行
-      addMemoToList($('#list'), message.text, true, message.timestamp); // 日本語のメッセージをリストに追加
-      addMemoToList($('#list'), message.translatedText, false, message.timestamp); // 中国語のメッセージをリストに追加
+      addMemoToList($('#list'), message.text, true, message.timestamp, message.key); // 日本語のメッセージをリストに追加
+      addMemoToList($('#list'), message.translatedText, false, message.timestamp, `${message.key}-cn`); // 中国語のメッセージをリストに追加
     });
   }).catch(error => {
     console.error('データベースからメッセージを取得中にエラーが発生しました:', error);
   });
 };
 
-// フィルタ入力欄で入力があった時の処理
-$('#filter').on('input', () => {
+// 検索ボタンがクリックされた時の処理
+$('#searchButton').on('click', () => {
   const filter = $('#filter').val().toLowerCase(); // フィルター入力欄の値を取得→大文字と小文字の区別をなくす
   $('#list').empty(); // フィルタリング結果のみを表示するためにリストを空にする
   get(dbRef).then((snapshot) => {
+    let hasMatchingMemos = false; // フラグを追加
     snapshot.forEach((childSnapshot) => { // 取得したテータをここのメモに分割して処理
       const childData = childSnapshot.val();
+      const key = childSnapshot.key; // 各メモのキーを取得
       if (childData.text.toLowerCase().includes(filter)) { // タイトルが入力された値を含む場合のみ以下の処理
-        addMemoToList($('#list'), childData.text, true, childData.timestamp); // 日本語メッセージ
-        addMemoToList($('#list'), childData.translatedText, false, childData.timestamp); // 中国語メッセージ
+        hasMatchingMemos = true; // フラグをtrueに設定
+        addMemoToList($('#list'), childData.text, true, childData.timestamp, key); // 日本語メッセージ
+        addMemoToList($('#list'), childData.translatedText, false, childData.timestamp, `${key}-cn`); // 中国語メッセージ
       }
     });
+    // フィルターに一致するメモがない場合の処理を追加
+    if (!hasMatchingMemos) {
+      const li = $('<li></li>').addClass('w-full flex mb-4');
+      li.html('<div class="chat-bubble">検索に一致するメモはありません</div>');
+      $('#list').append(li);
+    }
+  })
+    .catch((error) => {
+      console.error('データベースからメッセージを取得中にエラーが発生しました:', error);
+    });
+  // フィルター入力欄を空にする処理
+  $('#filterClear').on('click', () => {
+    $('#filter').val(''); // フィルター入力欄を空にする
+    loadMemos(); // メモを再度読み込む
+    $('#list').empty(); // リストを空にする
   });
 });
 
-// 調べることsnapshot childSnapshot get関数
+// わからなかったこと つまずいたところ
+// snapshot childSnapshot get関数
 // sortメソッド 引数として比較関数を受け取る
 // 比較関数
 // isJapaneseはパラメーター名なので関数呼び出し時には具体的な値を指定する必要がある(loadMemos)
+// アロー関数 thisが参照できないのはなぜか

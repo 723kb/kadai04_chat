@@ -27,3 +27,11 @@
 .chat-bubble p {
   @apply text-sm m-0 mb-1;
 }
+
+.timestamp {
+  @apply flex flex-col justify-end items-end;
+}
+
+.delete-memo {
+  @apply  text-lg m-1 p-1 hover:bg-white rounded-md;
+}
