@@ -1,6 +1,6 @@
 import firebaseConfig from "./firebaseApikey.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved, get, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"; // Realtime Database用の関数をインポートする
+import { getDatabase, ref, push, set, remove, get, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"; // Realtime Database用の関数をインポートする
 
 // Your web app's Firebase configuration
 console.log(firebaseConfig);
@@ -25,9 +25,11 @@ $(document).ready(() => {
   // memosLoadedがfalseの場合のみloadMemosを呼び出す
   if (!memosLoaded) {  //最初はfalse設定 読み込み時に$(document).ready(() => {の内容に入り、loadMemosが呼び出される
     loadMemos();
+    // console.log(memosLoaded, 'メモが読まれたか');
     // memosLoadedをtrueに設定して、loadMemosが1回だけ実行されるようにする
     memosLoaded = true; //ここでtrue判定になるのでリロードしてもloadMemosは呼び出されない
   }
+  // console.log(memosLoaded, 'メモが読まれたか');
 
   // フィルタリング機能説明のtoggleメソッド
   $("#filterArea").hide();
@@ -51,6 +53,7 @@ const addMemoToList = (list, text, isJapanese, timestamp, key, shouldScroll = fa
   let min = ('0' + date.getMinutes()).slice(-2);
   let formattedDate = y + '/' + m + '/' + d + ' ' + h + ':' + min;
 
+  // console.log(isJapanese, '日本語かどうか');
   if (isJapanese) { // isJapaneseがtrueなら、日本語のメモを追加
     li.html(`
       <div class="chat-bubble right" data-timestamp="${timestamp}"> 
@@ -87,6 +90,7 @@ const addMemoToList = (list, text, isJapanese, timestamp, key, shouldScroll = fa
   // 削除ボタンのクリックイベント(各日本語メッセージの削除)
   li.find('.delete-memo').on('click', function () {  // アロー関数にするとthisが機能しない!!
     const key = $(this).closest('li').data('key'); // クリックされた削除ボタンの親要素liを取得
+    // console.log(key)
     remove(child(dbRef, key)); // キーに対応するメモをデータベースから削除
     $(this).closest('li').remove(); // クリックされた削除ボタンの親要素liをリストから削除
     $(`[data-key="${key}-cn"]`).remove(); // 削除したメモのキーと-cn属性を持つ要素を削除(連動して消える)
@@ -201,7 +205,7 @@ $('#searchButton').on('click', () => {
     // フィルターに一致するメモがない場合の処理を追加
     if (!hasMatchingMemos) {
       const li = $('<li></li>').addClass('w-full flex mb-4');
-      li.html('<div class="chat-bubble">検索に一致するメモはありません</div>');
+      li.html('<div>検索に一致するメモはありません</div>');
       $('#list').append(li);
     }
   })
@@ -212,13 +216,18 @@ $('#searchButton').on('click', () => {
   $('#filterClear').on('click', () => {
     $('#filter').val(''); // フィルター入力欄を空にする
     loadMemos(); // メモを再度読み込む
+    // console.log(memosLoaded, 'メモが読まれたか');
     $('#list').empty(); // リストを空にする
   });
 });
 
 // わからなかったこと つまずいたところ
-// snapshot childSnapshot get関数
+// snapshot childSnapshot 
 // sortメソッド 引数として比較関数を受け取る
-// 比較関数
 // isJapaneseはパラメーター名なので関数呼び出し時には具体的な値を指定する必要がある(loadMemos)
-// アロー関数 thisが参照できないのはなぜか
+// アロー関数 thisが参照できないのはなぜか→アロー関数で書くと外部スコープのthis(windowオブジェクトなど)を指すから。
+
+// 関数まとめ
+// child 参照から子への参照を取得するための関数
+// get データベースからデータを取得するための関数
+// getDatabase データベースへの参照を取得するための関数
