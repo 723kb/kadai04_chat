@@ -9,7 +9,7 @@ kadai04_chat
 
 ## ③DEMO
 
-デプロイしている場合はURLを記入（任意）
+https://723kb.github.io/kadai04_chat/
 
 ## ④作ったアプリケーション用のIDまたはPasswordがある場合
 
