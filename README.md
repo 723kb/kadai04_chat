@@ -41,13 +41,13 @@ JavaScriptの約束事を全然理解できていなかったと痛感した。
 - [参考記事]
   - 1.アロー関数でthisを参照できない理由
    [https://fuuno.net/nani/nani20/nani20.html]
-  - 2. アロー関数と従来の関数の違い
+  - 2.アロー関数と従来の関数の違い
   [https://qiita.com/suin/items/a44825d253d023e31e4d]
-  - 3. thisのスコープの違い
+  - 3.thisのスコープの違い
   [https://qiita.com/wada1355/items/a1a208428d171fd006ea]
-  - 4. sortメソッド 比較関数
+  - 4.sortメソッド 比較関数
   [https://www.sejuku.net/blog/62904]
-  - 5. 処理の状態をフラグで管理する
+  - 5.処理の状態をフラグで管理する
   [https://qiita.com/zumi_ys/items/cdb5fdf348bb7adc4452]
 
 - [DEMO]
