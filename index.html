@@ -6,7 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>簡易翻訳チャットボット</title>
   <link href="css/output.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+      <!-- Latest Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <!-- ファビコン -->
   <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
   <!-- アイコン -->
@@ -46,15 +47,12 @@
       <div id="filterArea" class="w-1/2 flex flex-row justify-center items-center bg-white rounded-xl">
         <input id="filter" type="text" placeholder="日本語で検索したい言葉を入力"
           class="w-full text-lg py-5 px-2  rounded-xl hover:bg-pink-50">
-        <button id="filterClear" class="m-5 p-2 text-lg hover:bg-pink-50 rounded-md"><i
-            class="fas fa-trash "></i></button>
+        <button id="filterClear" class="m-5 p-2 text-lg hover:bg-pink-50 rounded-md"><i class="fa-solid fa-delete-left"></i></button>
       </div>
     </div>
     <!-- 入力エリア -->
     <div class="bg-[#7494C0] z-10 p-5 border-t border-slate-500">
       <div class="flex flex-col mx-5 px-5 pt-5 border-solid border-2 border-slate-500 rounded-xl bg-white">
-        <!-- <input id="title" type="text" placeholder="タイトルを入力　例：あいさつ"
-          class="text-lg py-5 px-2 mb-5 border-solid border border-slate-500 rounded-xl hover:bg-pink-50 whitespace-pre-line"> -->
         <textarea id="text" placeholder="日本語で本文を入力"
           class="text-lg h-12 p-2 border-solid border border-slate-500 rounded-xl hover:bg-pink-50"></textarea>
         <!-- ボタン部分 -->
