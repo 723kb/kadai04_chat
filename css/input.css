@@ -35,3 +35,7 @@
 .delete-memo {
   @apply  text-lg m-1 p-1 hover:bg-white rounded-md;
 }
+
+.speak-memo {
+  @apply text-lg m-1 p-1 hover:bg-[#8DE055] rounded-md;
+}

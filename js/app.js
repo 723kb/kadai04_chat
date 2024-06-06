@@ -73,6 +73,9 @@ const addMemoToList = (list, text, isJapanese, timestamp, key, shouldScroll = fa
         <h3>中国語 : </h3>
         <p class='cn-text'>${text}</p>
         <p class="text-end">${formattedDate}</p>
+        <button class="speak-memo">
+          <i class="fa fa-volume-up"></i>
+        </button>
       </div>
     `);
   }
@@ -95,6 +98,28 @@ const addMemoToList = (list, text, isJapanese, timestamp, key, shouldScroll = fa
     $(this).closest('li').remove(); // クリックされた削除ボタンの親要素liをリストから削除
     $(`[data-key="${key}-cn"]`).remove(); // 削除したメモのキーと-cn属性を持つ要素を削除(連動して消える)
   });
+
+  // スピーカーボタンのクリックイベント
+  li.find('.speak-memo').on('click', function () {
+    // クリックされたボタンと同じ要素を持つ中国語のメッセージを取得
+    const textToSpeak = $(this).siblings('.cn-text').text();
+    speakText(textToSpeak);
+  });
+};
+
+// メモを音読する関数
+const speakText = (text) => {
+  // ブラウザがWeb Speech APIのspeechSynthesisに対応しているかを確認
+  if ('speechSynthesis' in window) {
+    // 音声合成用のUtteranceオブジェクトを作成
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'zh-CN'; // 中国語に設定
+    // テキストを音声で読み上げる
+    speechSynthesis.speak(utterance);
+  } else {
+    // ブラウザが音声合成に対応していない場合の処理
+    alert('このブラウザは音声合成に対応していません。');
+  }
 };
 
 // MyMemory APIを使って指定されたテキストを翻訳する関数

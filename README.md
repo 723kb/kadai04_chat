@@ -26,7 +26,7 @@ https://723kb.github.io/kadai04_chat/
 
 - コードの記載順を変えたり、jsを切り分けて管理したが結局デプロイすると全てのjsが動かなかった(データベースとのやり取りに関係のない部分も動かず)。
 - メモ読み込みの関数や日本語メッセージを削除すると中国語メッセージも連動して削除する部分がなかなかうまくいかなかった。ChatGPTにコードを投げながら、フラグを立ててtrue,falseで判定するとうまくいった。このフラグについての理解が今ひとつなのでしっかり理解した上で次の課題に活かしたい。
-- 翻訳内容を発声してくれる機能を実装したい。
+- 翻訳内容を発声してくれる機能を実装したい。→追記：ブラウザ標準のWeb Speech APIを使って簡単に実装できた。
 
 ## ⑦質問・疑問・感想、シェアしたいこと等なんでも
 
@@ -49,7 +49,11 @@ JavaScriptの約束事を全然理解できていなかったと痛感した。
   [https://www.sejuku.net/blog/62904]
   - 5.処理の状態をフラグで管理する
   [https://qiita.com/zumi_ys/items/cdb5fdf348bb7adc4452]
+  - 6.Web Speech API
+  [https://zenn.dev/micronn/articles/b654ceca1bdf13]
 
 - [DEMO]
 ![DEMO](https://github.com/723kb/kadai05/assets/168268533/121c85c5-4afb-4c72-9bf0-f5f4f0ba1459)
+音声機能追加
+![DEMO](https://github.com/723kb/kadai04_chat/assets/168268533/a05381c6-f7a7-40ba-8ccf-218ee044c910)
 
